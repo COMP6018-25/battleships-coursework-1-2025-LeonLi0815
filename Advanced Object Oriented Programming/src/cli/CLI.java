@@ -1,18 +1,27 @@
 package cli;
 
 import model.*;
-
 import java.util.Scanner;
 
+/**
+ * Command-line interface for the Battleships game.
+ */
 public class CLI {
     private Model model;
     private Scanner scanner;
 
+    /**
+     * Constructor for CLI.
+     * @param model the game model
+     */
     public CLI(Model model) {
         this.model = model;
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Runs the CLI version of the game.
+     */
     public void run() {
         System.out.println("=== Welcome to Battleships CLI ===");
         displayGrid();
@@ -22,9 +31,12 @@ public class CLI {
             String input = getUserInput();
 
             try {
-                boolean hit = model.attack(input);
-                if (hit) {
+                AttackResult result = model.attack(input);
+                if (result.isHit()) {
                     System.out.println("Hit!");
+                    if (result.isSunk()) {
+                        System.out.println("You sunk a ship!");
+                    }
                 } else {
                     System.out.println("Miss!");
                 }
@@ -39,6 +51,9 @@ public class CLI {
         System.out.println("Total tries: " + model.getTries());
     }
 
+    /**
+     * Displays the current grid.
+     */
     public void displayGrid() {
         Board board = model.getBoard();
         System.out.println("   1 2 3 4 5 6 7 8 9 10");
@@ -64,6 +79,9 @@ public class CLI {
         }
     }
 
+    /**
+     * Gets user input.
+     */
     public String getUserInput() {
         return scanner.nextLine().toUpperCase().trim();
     }

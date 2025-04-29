@@ -3,15 +3,27 @@ package controller;
 import model.*;
 import view.View;
 
+/**
+ * Controller for the Battleships GUI version.
+ * Handles user actions and updates the Model and View accordingly.
+ */
 public class Controller {
     private Model model;
     private View view;
 
+    /**
+     * Constructor for Controller.
+     * @param model the game model
+     * @param view the game view
+     */
     public Controller(Model model, View view) {
         this.model = model;
         this.view = view;
     }
 
+    /**
+     * Processes a user's guess based on clicked row and column.
+     */
     public void processGuess(int row, int col) {
         String coordinate = convertToCoordinate(row, col);
         try {
@@ -34,6 +46,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Converts row and column into Battleships coordinate format (e.g., A5).
+     */
     private String convertToCoordinate(int row, int col) {
         char rowChar = (char) ('A' + row);
         return rowChar + String.valueOf(col + 1);

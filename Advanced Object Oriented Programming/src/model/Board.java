@@ -1,13 +1,23 @@
 package model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+/**
+ * Represents the game board.
+ */
 public class Board {
     private final int SIZE = 10;
     private CellStatus[][] grid;
+    private Map<Position, Ship> shipPositions; // Track which ship occupies each cell
 
+    /**
+     * Constructor for Board.
+     */
     public Board() {
         grid = new CellStatus[SIZE][SIZE];
+        shipPositions = new HashMap<>();
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 grid[i][j] = CellStatus.EMPTY;
@@ -15,17 +25,26 @@ public class Board {
         }
     }
 
-    public boolean placeShip(int row, int col, int length, boolean horizontal) {
+    /**
+     * Places a ship on the board.
+     */
+    public boolean placeShip(Ship ship, int row, int col, int length, boolean horizontal) {
         if (!canPlaceShip(row, col, length, horizontal)) {
             return false;
         }
 
         for (int i = 0; i < length; i++) {
+            int r = row;
+            int c = col;
             if (horizontal) {
-                grid[row][col + i] = CellStatus.SHIP;
+                c += i;
             } else {
-                grid[row + i][col] = CellStatus.SHIP;
+                r += i;
             }
+            grid[r][c] = CellStatus.SHIP;
+            Position pos = new Position(r, c);
+            ship.addPosition(pos);
+            shipPositions.put(pos, ship);
         }
         return true;
     }
@@ -45,20 +64,32 @@ public class Board {
         return true;
     }
 
-    public boolean attack(int row, int col) {
+    /**
+     * Attacks a position on the board.
+     * @return the Ship hit, or null if missed
+     */
+    public Ship attack(int row, int col) {
+        Position pos = new Position(row, col);
+
         if (grid[row][col] == CellStatus.SHIP) {
             grid[row][col] = CellStatus.HIT;
-            return true;
+            return shipPositions.get(pos);
         } else if (grid[row][col] == CellStatus.EMPTY) {
             grid[row][col] = CellStatus.MISS;
         }
-        return false;
+        return null;
     }
 
+    /**
+     * Gets the status of a cell.
+     */
     public CellStatus getCellStatus(int row, int col) {
         return grid[row][col];
     }
 
+    /**
+     * Gets board size.
+     */
     public int getSize() {
         return SIZE;
     }

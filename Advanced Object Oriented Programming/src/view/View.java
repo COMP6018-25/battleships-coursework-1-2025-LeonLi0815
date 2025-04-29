@@ -9,12 +9,20 @@ import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Graphical user interface (GUI) view for Battleships.
+ */
 public class View extends JFrame implements Observer {
     private Model model;
     private Controller controller;
     private JButton[][] gridButtons;
     private JLabel attemptsLabel;
 
+    /**
+     * Constructor for View.
+     * @param model the game model
+     * @param controller the game controller (can be set later)
+     */
     public View(Model model, Controller controller) {
         this.model = model;
         this.controller = controller;
@@ -24,6 +32,9 @@ public class View extends JFrame implements Observer {
         initializeGUI();
     }
 
+    /**
+     * Initializes the GUI components.
+     */
     private void initializeGUI() {
         setTitle("Battleships Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -39,7 +50,9 @@ public class View extends JFrame implements Observer {
                 final int c = col;
                 button.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        controller.processGuess(r, c);
+                        if (controller != null) {
+                            controller.processGuess(r, c);
+                        }
                     }
                 });
                 gridButtons[row][col] = button;
@@ -56,11 +69,17 @@ public class View extends JFrame implements Observer {
         setVisible(true);
     }
 
+    /**
+     * Update method called when the Model changes.
+     */
     @Override
     public void update(Observable o, Object arg) {
         refresh();
     }
 
+    /**
+     * Refreshes the board display according to the current model state.
+     */
     public void refresh() {
         Board board = model.getBoard();
 
@@ -79,7 +98,7 @@ public class View extends JFrame implements Observer {
                         button.setEnabled(false);
                         break;
                     default:
-                        // Keep empty buttons white and enabled
+                        // Do nothing if still empty
                         break;
                 }
             }
@@ -87,10 +106,16 @@ public class View extends JFrame implements Observer {
         attemptsLabel.setText("Attempts: " + model.getTries());
     }
 
+    /**
+     * Displays a popup message to the user.
+     */
     public void showMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
 
+    /**
+     * Disables all buttons on the board.
+     */
     public void disableBoard() {
         for (int row = 0; row < gridButtons.length; row++) {
             for (int col = 0; col < gridButtons[row].length; col++) {
@@ -98,9 +123,11 @@ public class View extends JFrame implements Observer {
             }
         }
     }
-    // 在 View.java 补充这个方法（在构造器下面）
+
+    /**
+     * Allows setting the controller after View initialization.
+     */
     public void setController(Controller controller) {
         this.controller = controller;
     }
-
 }
